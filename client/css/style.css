@@ -1,0 +1,28 @@
+.red {
+    color : red;
+}
+
+.main-title{
+    color: green
+}
+
+.login-page-title{
+    color:#fffc99;
+}
+
+
+.login-register-background{
+    background-color:#bcd39c;
+}
+
+
+.form-placeholder{
+    color:black;
+}
+
+
+#register-link{
+    color: blue;
+    text-underline-position: below;
+    text-decoration: underline;
+}
