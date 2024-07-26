@@ -39,30 +39,99 @@ const connection = mysql.createConnection({
 connection.connect((err) => {
     if(err) throw err;
 
-    console.log("Connected to MySQL");
+    console.log("Connected to MySQL.");
 });
 
 
 var services  = function(app) {
-app.post('/write-record-mysql', function(req, res) {
+app.post('/register-user-mysql', function(req, res) {
 
-var data = {                            //confused, but the names have to correlate with the names of the boxes & listener
-    bookTitle: req.body.bookTitle,          
-    author: req.body.author,
-    publisher: req.body.publisher,
-    yearPublished: req.body.yearPublished,
-    isbn: req.body.isbn
+var data = {     
+    
+    //confused, but the names have to correlate with the names of the boxes & listener
+    pass : req.body.pass,
+    display_name: req.body.display_name,
+    user_email: req.body.user_email
+
+
     };
 
-    connection.query("INSERT INTO users SET ?", data, function(err){
+    connection.query("INSERT INTO user SET ?", data, function(err){
         if (err) {
-            return res.status(205).send(JSON.stringify ({msg: err}));
+            console.log("error occured when sending in stuff into database");
+            console.log(err);
+            return res.status(205).send(JSON.stringify({msg: err}));
             
         } else {
             return res.status(201).send(JSON.stringify({msg: "SUCCESS"}));
         }
     
 });
+}); //end of register-user
+
+
+//start of login-user
+
+app.get('/login-user-mysql', function(req, res){
+    var data = {
+        pass : req.body.pass,
+         user_email: req.body.user_email
+    };
+    var password = req.query.pass
+    var email = req.query.user_email
+
+connection.query("SELECT * FROM user WHERE user_email = ? AND pass = ?", [email, password], function(err, results, fields){
+    
+        
+    if (err){
+        console.log("error in database.js"); 
+        console.log(err);
+        return res.status(209).send(JSON.stringify({msg: err}));
+    } else if (results.length >0){
+        return res.status(200).send(JSON.stringify({msg: "LOGIN SUCCESSFUL" }));
+        
+    } else{
+        return res.status(201).send(JSON.stringify({msg:"Invalid email or password." }))
+    }
+
+
+
 });
-};
+
+
+})
+//end of login-user
+
+//start of sessions
+app.get('/sessions-mysql', function(req, res){
+    connection.query("SELECT COUNT(*) AS sessionCount FROM session", function(err, results, fields) {
+        if (err) {
+            console.log("Error querying database:", err);
+            return res.status(500).send(JSON.stringify({ msg: "Database error" }));
+        }
+
+        const numberOfSessions = results[0].sessionCount;
+        console.log("Number of sessions created: " + numberOfSessions);
+        module.exports = {numberOfSessions: numberOfSessions};          //added line
+        return res.status(200).send(JSON.stringify({ numberOfSessions: numberOfSessions })); 
+                 
+            //testing out return functions
+            
+
+    });
+
+})  
+//end of sessions
+
+//start of assign user
+app.get("/assign-user-mysql")
+
+//end of assign user
+
+
+}; //end of services 
+
+
 module.exports = services;
+
+

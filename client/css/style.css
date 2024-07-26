@@ -15,6 +15,9 @@
     background-color:#bcd39c;
 }
 
+.sessions-background{
+    background-color: #607196;
+}
 
 .form-placeholder{
     color:black;
@@ -26,3 +29,37 @@
     text-underline-position: below;
     text-decoration: underline;
 }
+
+
+
+/* Table stuff */
+
+table, th, td{
+    border: 3px solid white;    
+    
+}
+table{
+    width: 100%;
+}
+
+
+/* End of table stuff*/
+
+
+/* Dropdown stuff  */
+.dropdownMenu{
+    position: relative;
+}
+.dropdown-content{
+    background-color: red;
+    display: none;
+    min-width: 160px;
+    overflow: auto; 
+    position: absolute;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+
+}
+
+
+.show {display: block;}
+/* End of dropdown stuff */

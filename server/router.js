@@ -21,6 +21,13 @@ app.get('/register-page', function (req, res) {
 });
 
 
+//sessions
+app.get('/sessions', function (req, res){
+    res.status(200).sendFile(path.join(__dirname + "/../client/sessions.html"));
+});
+
+
+
 }
 
 

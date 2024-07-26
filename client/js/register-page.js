@@ -22,15 +22,44 @@ var emailValue = email.value;
 
     var name = document.getElementById('r-username');
     var nameValue = name.value;
-    
-    
-
 
     //got display name
 
+//combining it all into one
+var jsonString = {
+   pass : passwordValue,
+   display_name: nameValue,
+   user_email: emailValue
+
+}
+;
+
+    $.ajax({    
+    url: databaseURL + "/register-user-mysql",
+    //the url is correct, and errors are going through, which means something else is wrong. 
+    type: 'post',
+    data: jsonString,
+    success: function(response){
+        console.log("Response: " + response);
+         var returnData = JSON.parse(response);
+         if (returnData.msg === "SUCCESS"){
+             alert("Account successfully made.")
+         } else {
+             alert(returnData.msg);
+             }
+
+        },
+        error: function(err){
+            console.log("An error was passed");
+            console.log(err);
+         }
+    });
+    return false;
+;
 
 
-} //end of function
+
+}//end of function
 
 
 

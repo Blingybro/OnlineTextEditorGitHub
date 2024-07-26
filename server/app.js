@@ -1,10 +1,33 @@
-const  express = require('express');
+const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const bodyParser = require('body-parser');
 
 
+//adding stuff in
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
+
+//end of adding stuff in
+
 const app = express();
+const sessionStore = new MySQLStore({
+    host: '127.0.0.1',
+    user: 'root',
+    password: '12345',
+    database: '296project'
+}) ;
+
+app.use(session({
+    secret: 'the_secret_key',
+    resave: false,
+    saveUninitialized: false,
+    store: sessionStore
+}));
+
+
+//also added above line
+
 
 app.use(cors());
 
