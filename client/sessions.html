@@ -13,7 +13,13 @@
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="/client/js/config.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <script src='/client/js/sessions.js' async></script> 
+   
+    <!-- <script src = "https://cdn.socket.io/socket.io-3.0.1.min.js"> </script> -->
+
+
+
 </head>
 
 <body class=sessions-background>
@@ -24,68 +30,154 @@
             </div>
 
         </div> <!--End of row-->
+<div class = "row"> <!--Start of new row-->
+    <div class = "col">
+        <h1 id = "login-display"> Logged in as:  
+            <p id = "login-name-display" style = "display: inline"></p>        
+        </h1> 
+        
+        
+    </div>
 
+
+</div> <!--End of row-->
     </div> <!--End of container-->
-    <div class = "container">
+    <div class = "container-fluid text-center">
     <div class="row">
         <div class="col">
-            <button type="button" class="btn btn-secondary"  id = "testButton" onclick= buttonClicked()> Load Sessions</button>
-        </div>
-        <div class = "col">
-            <h1 id = "login-display"> Logged in as:  
-                <h1 id = "login-name-display"></h1>      
-            </h1> 
+            <!-- <button type="button" class="btn btn-secondary"  id = "testButton" onclick= buttonClicked()> Load Sessions</button> -->
+
+
+            <div class = "dropdownMenu"> <!--Start of dropdown-->
+                <h1 id = "joinSession" onclick = "joinSessionDropdown()"> Join a Session </h1>
+                <div id = "theDropdown" class = "dropdown-content"> 
+                    <form>
+                        <label for="join-session-ID"> Session ID: </label>
+                    <input type = "text" id = "join-session-ID" name = "join-session-ID">
+                    
+                    </form>
             
+            
+            
+                </div> <!--End of dropdown content-->
+            </div> <!--End of dropdown-->
+
+
+
+        </div>
+        
+        <div class = "col">
+<button type ="button" class = "btn btn-light" onclick = generateSessionDropdown() > Generate a new session </button>
+
+<!--Start of dropdown for generate session-->
+<div id = "generateSessionDropdown" class = dropdown-content>
+<form>
+    <label>Session description (Max 100 words)</label>
+    <input class = "form-placeholder" type = "text" id = "session_description_box"> </input> 
+    <button type = "button" class = "btn btn-warning" onclick = "displayModal();buttonClicked()"> Enter </button>
+</form>
+</div>
+<!--End of dropdown for generate session-->
         </div>
     </div> <!--End of row-->
+    
 </div><!--End of container-->
     <!-- Start of table -->
-<table id = "sessionTableContainer" class = "tablesorter">
+<!-- <table id = "sessionTableContainer" class = "tablesorter"> -->
 
 
-    <thead> <!--Start of heading -->
-        <tr class = 'table-headerRow'>
-            <th>Name</th>
+    <!-- <thead> Start of heading -->
+        <!-- <tr class = 'table-headerRow'> -->
+            <!-- <th>Name</th>
             <th>Host</th>
             <th>Description</th>
             <th># of Members</th>
             <th>Start time</th>
             <th>Password</th>
-            <th>Join</th>
+            <th>Join</th> -->
 
 
 
 
-        </tr>
+        <!-- </tr> -->
 
 
-    </thead> <!--End of heading-->
-<tbody id = "sessionTable"> <!--Start of body-->
+    <!-- </thead> End of heading -->
+<!-- <tbody id = "sessionTable"> Start of body -->
 
 
 
 
-</tbody> <!--End of body-->
+<!-- </tbody> End of body -->
 
-</table>
+<!-- </table> -->
 <!--End of table-->
 
-<div class = "dropdownMenu"></div>
-    <h1 id = "createSession" onclick = "createSessionDropdown()"> Create a Session </h1>
-    <div id = "theDropdown" class = "dropdown-content"> 
-        <form>
-            <label for="create-session-name"> Session Name: </label>
-        <input type = "text" id = "create-session-name" name = "create-session-name">
-        
-        </form>
 
+
+<!--Start of Modal-->
+<div id = "myModal" class = "modal">    
+
+<!--Start of Modal Content-->
+<div class ="modal-content" >
+    <span class = "close"> &times;</span>
+    <div class = "container"> <!--Start of container-->
+    <div class = "row">
+    <div class = "col">
 
 
     </div>
-</div> <!--End of dropdown-->
+</div><!--End of row-->
+</div> <!--End of container-->
+<div class = "container"> <!--Start of container-->
+    <div class = "row"> 
+<div class = "col">
+
+    <h1>Session host: </h1> 
+<h1 id = "host_id_display"> </h1>
+
+</div>
+
+<div class = "col">
+
+<h1> Number of users:</h1>
+<h1 id =numberOfUsers> </h1>
+
+</div>
+
+<div class = "col">
+<h1> Session description:  <p id = "sessionDescriptionDisplay"></p></h1>
 
 
+</div>
 
+<div class = "col">
+    <h1>Session ID:  <p id = displaySessionIDDisplay></p>   </h1>
+</div>
+
+</div>      <!--End of row-->
+</div>          <!--End of container-->
+    <div class = "container" id = "user-text-location"> <!--Start of where user text goes-->
+
+
+    </div> <!--End of where user text goes-->
+<div class = "container"> <!--Start of form fill out-->
+    <div class = "row">
+        <div class = "col text-center">
+<form id="form">
+    <input id="input" autocomplete="off" />
+    <button id="button">Send</button>
+</form>
+
+</div> <!--End of col-->
+</div>
+</div> <!--End of form fill out-->
+
+</div>
+<!--End of Modal Content-->
+
+</div> 
+<!--End of Modal-->
 
 </body>
 

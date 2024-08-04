@@ -1,4 +1,4 @@
-const { get } = require("https");
+//const { get } = require("https");
 
 function loginUser(){
 //get email value
@@ -31,10 +31,16 @@ var jsonString = {
     data: jsonString,
     success: function(response){                            
         console.log("Response: " + response);               
-         var returnData = JSON.parse(response);             
-          
-             alert(returnData.msg);                         
-             assignUser(emailValue);                                         
+         var returnData = JSON.parse(response); 
+                     
+          const checkValue = "LOGIN SUCCESSFUL";
+             //alert(returnData.msg);
+             console.log(response + " is the return data"); 
+             if  (returnData.msg === checkValue){        
+                document.getElementById("user-status").innerHTML = "Login successful";
+                setupUser(returnData);
+             //assignUser(emailValue);                                        
+    } 
 
         },
         error: function(err){                           
@@ -54,6 +60,7 @@ var jsonString = {
 } //end of function
 
 //start of assignUser Function
+//not currently being used. 
 function assignUser(emailValue){
     console.log("The user should now be assigned.");
     console.log("Is the email " + emailValue + "?"); 
@@ -62,10 +69,14 @@ function assignUser(emailValue){
     //first thing: userID
     //second thing: display name
 
+ var theLoginEmail = document.getElementById("user-id");
+ var assignUserVar = theLoginEmail.value;
+console.log("Line 70 is currently running properly");
+
 $.ajax({
     url: databaseURL + "/assign-user-mysql",
     type: 'get',
-    data: jsonString,
+    data: assignUserVar,
     success: function(response){
         console.log("This is what came back: " + response)
     }
@@ -78,3 +89,21 @@ $.ajax({
 
     }
     //end of assignUser function
+
+
+    //start of trial function
+function setupUser(userInfo){
+    localStorage.setItem("User ID", userInfo.user_id);
+    localStorage.setItem("User Email", userInfo.user_email);
+    localStorage.setItem("Display Name", userInfo.display_name);
+    
+    localStorage.getItem("User ID");
+
+    console.log("The info: " + 
+        localStorage.getItem("User ID", userInfo.user_id) +
+        localStorage.getItem("User Email", userInfo.user_email) + 
+        localStorage.getItem("Display Name", userInfo.display_name)
+
+    )
+}
+    //end of trial function
