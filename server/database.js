@@ -360,13 +360,12 @@ return results;
 })
 
 //start of save-text
-app.post("/save-text-mysql",function(req, res){
+app.post("/save-text-mysql", function(req, res){
     var data = {
-          session_id  : req.body.session_id,
+          session_id : req.body.session_id,
            text : req.body.text, 
            user_id : req.body.user_id
     }
-
 connection.query("INSERT INTO text SET ?", data, function(err){
 
 if (err){
@@ -382,21 +381,67 @@ if (err){
 
 }) //end of save text
 
+//start of load-text
+app.get('/load-text-mysql', function(req, res){
+    var it = req.query.session_id
 
-app.post('/increase-numberOfUsers-mysql', function(req, res){
-    var thing = req.body.room_id;
-    console.log("Bababooey." + thing);
+    connection.query("SELECT * FROM text WHERE session_id = ?",it, function(err, results, fields){
+        console.log("Number of results: " + results.length);
+        console.log("The definition of it: " + it);
+const myJSON = '{"text_id":[], "user_id":[]}';
+const myObj = JSON.parse(myJSON);
 
+        for (i=0;results.length >i;i++){
+            var theResults = results[i]
+            console.log("ran " + i + " times")
+            myObj.text_id[i] = theResults.text_id;
+            myObj.user_id[i] = theResults.user_id;
+            //console.log(myObj.user_id[i] +" and " + myObj.text_id[i])
+        }
 
-connection.query("UPDATE session SET number_of_users = 1 + number_of_users WHERE room_id = ?", thing, function(err){
+        return res.status(200).send(JSON.stringify(myObj));
+    })
     
 })
 
+//end of load text
 
+//start of convertUserText
+app.get('/convert-userText-mysql', function(req, res){
+    //console.log("The thing sent:" + JSON.parse(req))
+console.log()
+    //first conversion: text_id to actual text
+    console.log("Does this part work?" + req.body.text_id[1])
+    connection.query("SELECT * FROM text WHERE text_id =?", req, function(err, results, fields){
+
+
+    })
+
+
+})
+//end of convertUserText
+
+//start of increase users
+app.post('/increase-numberOfUsers-mysql', function(req, res){
+    var thing = req.body.room_id;
+connection.query("UPDATE session SET number_of_users = 1 + number_of_users WHERE room_id = ?", thing, function(err){
 
 })
 
 
+
+})
+//end of increase users
+
+//start of decrease users
+app.post('/decrease-numberOfUsers-mysql', function(req, res){
+    var thing = req.body.room_id;
+
+    connection.query("UPDATE session SET number_of_users = number_of_users - 1 WHERE room_id = ?", thing, function(err){
+
+    })
+    
+})
 
 }; //end of services 
 

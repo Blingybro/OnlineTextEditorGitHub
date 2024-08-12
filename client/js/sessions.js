@@ -164,6 +164,8 @@ $.ajax({
         console.log("Response received: " + response)
         var theReturnData = JSON.parse(response);
         document.getElementById("displaySessionIDDisplay").innerHTML =theReturnData.room_id;
+        room = theReturnData.room_id
+        activeSessionID = theReturnData.session_id
         document.getElementById("host_id_display").innerHTML = theReturnData.user_id;
         //number of users needs to be updated. how do we do it?
         //call to a function that will update the numberOfUsers in the current session
@@ -172,6 +174,7 @@ $.ajax({
         document.getElementById("numberOfUsers").innerHTML = theReturnData.number_of_users;
         document.getElementById("sessionDescriptionDisplay").innerHTML = theReturnData.session_description ;
         displayModal();
+        loadText(activeSessionID);
     },
     error: function (err){
         console.log("An error occured.");
@@ -181,7 +184,9 @@ $.ajax({
 
 
 //end of ajax
-console.log("Line 174 in sessions.js ran.");
+getSessionID();
+
+    joinTheRoom();
     socket.emit("join", JSON.stringify({room: userRoomID}));
  //   displayModal();
 }
@@ -189,6 +194,7 @@ console.log("Line 174 in sessions.js ran.");
 //start of saveText function
 
 function saveText(toBeUsed){
+    
     var backToString = JSON.parse(toBeUsed);
     console.log("First part:" + backToString.text);
 
@@ -265,6 +271,8 @@ function logOut(){
     localStorage.setItem("User Email", "" );
     localStorage.setItem("Display Name", "" );
     location.assign(databaseURL);
+    room = ''
+    activeSessionID = ''
     console.log("Is this triggered?");
     alert("Logged out successfully");
 }
@@ -274,8 +282,6 @@ function logOut(){
 //start of increaseNumberOfUsers function
 
 function increaseNumberOfUsers(room_id){
-console.log("The room with the room_id of " + room_id + 
-    " needs to increase their number of users by 1" );
 
 var the_room_id = {
     room_id: room_id
@@ -296,6 +302,24 @@ $.ajax({
 }
 //end of increaseNumberOfUsers function
 
+//start of decreaseNumberOfUsers function
+
+function decreaseNumberOfUsers(room_id){
+
+var the_room_id = {
+    room_id: room
+}
+$.ajax({
+    url: databaseURL + "/decrease-numberOfUsers-mysql",
+    type: 'post',
+    data: the_room_id,
+    success: function(response){
+        console.log("Leaving was successful.")
+    }
+})
+}
+
+//end of decreaseNumberOfUsers function
 
 //start of modal stuff
 
@@ -314,15 +338,17 @@ function displayModal() {
 
 // When the user clicks on <span> (x), close the modal
 span.onclick = function() {
+    decreaseNumberOfUsers(room);
   modal.style.display = "none";
 }
 
 // When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
+//hidden/removed
+// window.onclick = function(event) {
+//   if (event.target == modal) {
+//     modal.style.display = "none";
+//   }
+// }
 
 //end of modal stuff
 
@@ -347,6 +373,64 @@ var userSpecificInfo = {
 
 
 }
+
+//start of joinTheRoom
+function joinTheRoom(){
+    
+    socket.on("connection", (socket) => {
+        socket.join(room);
+        console.log(room + " was joined.");
+console.log("Uh oh");
+    })
+}
+
+//end of joinTheRoom
+
+
+//start of loadText
+function loadText(activeSessionID){
+    console.log("The text should be loading in now...");
+    var currentSession = activeSessionID;
+    var jsonString = {
+        session_id: currentSession
+    }
+    $.ajax({
+        url: databaseURL + "/load-text-mysql",
+        type: 'get', 
+        data: jsonString,
+        success: function(response){
+            console.log("It went through." + response)
+           it = JSON.parse(response)
+            convertUserText(it)
+
+
+
+        }
+    })
+}
+//end of loadText
+
+//start of convert userText
+function convertUserText(response){
+    console.log("Converting in progress");
+console.log(response);
+
+$.ajax({
+    url: databaseURL + "/convert-userText-mysql",
+    type: 'get',
+    data: response,
+    success: function(response){
+        console.log("Eureka" + response)
+    }
+    
+})
+
+
+
+}
+
+//end of convert user-text
+
 form.addEventListener('submit', function(event) {
     event.preventDefault();
     if (input.value) {
@@ -368,14 +452,15 @@ form.addEventListener('submit', function(event) {
             userName: theDisplayName
             
         }
-        socket.emit('chat-message', sentData);
+        socket.emit('chat-message', sentData); 
+        //original line above
+        //socket.to(room).emit('chat-message', sentData);
         input.value = '';
     }
 });
 
 socket.on('chat_message', function(msg) {
-    console.log( userSpecificInfo.display_name +  " with the email " + userSpecificInfo.user_email + " typed out, " + msg)
-    console.log()
+
     const item = document.createElement('li');
     item.textContent = msg;
     
@@ -383,7 +468,7 @@ socket.on('chat_message', function(msg) {
 
  theHTML += "<div id = 'userBox'>" +
   "<p id = 'userBoxUsername'>   " + msg.userName +  "</p>" + 
-  "<p id = 'userBoxText'>" + 
+  "<p id = 'userBoxText' class='whiteText'>" + 
   msg.message + 
  "</p>" +
  "</div>"
