@@ -30,6 +30,15 @@
     text-decoration: underline;
 }
 
+#user-status{
+    color: green;
+}
+
+#border-box-login{
+    border-style:ridge;
+    background-color: #E5C1BD;
+   
+}
 
 
 /* Table stuff */
@@ -51,7 +60,7 @@ table{
     position: relative;
 }
 .dropdown-content{
-    background-color: red;
+    background-color: #5CC8FF;
     display: none;
     min-width: 160px;
     overflow: auto; 
@@ -106,4 +115,16 @@ table{
   }
   
 
-/*End of Modal Stuff/
+/*End of Modal Stuff */ 
+
+#userBox{   
+    border-radius: 25px;
+    padding: 20px;
+    background: #1446A0;
+/* width: 100px; */
+    /* height: 75px; */
+}
+#userBoxUsername{
+    color: white;
+    size: 20px;
+}

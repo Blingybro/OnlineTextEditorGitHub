@@ -98,10 +98,11 @@ io.on('connection', (socket) => {
         socket.join(data.room);
     })
     // Handle incoming messages
-    socket.on('chat message', (msg) => {
+    socket.on('chat-message', (msg) => {
         // Save message to the database
-        const query = 'INSERT INTO text (content) VALUES (?)';
-        // db.query(query, [msg], (err) => {       //fix this
+         //   console.log(msg.userName+" said: " + msg.message)     works properly
+        //const query = 'INSERT INTO text (content) VALUES (?)';
+        // connection.query(query, [msg], (err) => {       //fix this
         //     if (err) {
         //         console.error('Error saving message to the database:', err);
         //         return;
@@ -109,8 +110,10 @@ io.on('connection', (socket) => {
         //     Broadcast the message to all clients
         //     io.emit('chat message', msg);
         // });
-        console.log("Text was entered in from user");
-        io.emit('chat message', msg);
+        //console.log("Text was entered in from user");
+        //var room = document.getElementById("join-session-ID").value;
+       // console.log("The current room:" + room);
+        io.emit('chat_message', msg);
         //sends information over to everyone connected to socket
     });
 

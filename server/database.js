@@ -115,7 +115,12 @@ connection.query("INSERT INTO host SET ?", data, function(err){
         return res.status(205).send(JSON.stringify({msg: err}));
         
     } else {
-        return res.status(201).send(JSON.stringify({msg: "SUCCESS"}));
+        console.log("Line 118 in database.js was run");
+        
+      
+      
+      //  return res.status(201).send(JSON.stringify({msg: "SUCCESS"}));
+        
     }
 
 });
@@ -144,6 +149,8 @@ connection.query("SELECT * FROM user WHERE user_email = ? AND pass = ?", [email,
     } else if (results.length >0){
 
         const user = results[0];
+        console.log(user + " is the value of the user" )
+        console.log(user.display_name);
         const response = {
             msg: "LOGIN SUCCESSFUL",
             user_id : user.user_id,
@@ -160,7 +167,7 @@ connection.query("SELECT * FROM user WHERE user_email = ? AND pass = ?", [email,
         
         
     } else{
-        return res.status(201).send(JSON.stringify({msg:"Invalid email or password." }))
+        return res.status(201).send(JSON.stringify({msg:"Invalid entry" }))
     }
 
 
@@ -212,12 +219,13 @@ app.get('/sessions-mysql', function(req, res){
 //start of generate session
 
 app.post('/generate-session-mysql', function(req, res){
-console.log("App.post generate-session-mysql was triggered.");
+
 
 var data = {
     user_id: req.body.user_id,
     session_description: req.body.session_description,
-    number_of_users: req.body.number_of_users
+    number_of_users: req.body.number_of_users,
+    room_id: req.body.room_id
 };
 
 connection.query("INSERT INTO session SET ?", data, function(err){
@@ -258,6 +266,136 @@ app.get("/assign-user-mysql", function(req, res){
 })
 
 //end of assign user
+
+
+//start of display session details
+app.get("display-session-details", function (req, res){
+
+
+
+    connection.query("SELECT * from session WHERE ")
+})
+
+//end of display session details
+
+//start of get session-id mysql
+
+app.get('/get-session-id-mysql', function (req, res){
+
+
+
+var sessionID = req.query.room_id
+
+connection.query("SELECT * from session WHERE room_id = ? ", [sessionID], function(err, results, fields){
+    
+    if (err){
+        console.log("error in database.js");
+        console.log(err);
+        return res.status(209).send(JSON.stringify({msg: err}));
+    } else if (results.length > 0){
+        console.log("ONLY ONE RESULT RETURNED, SOMETHING's RIGHT");
+        const firstResult = results[0];
+        
+        const response = {
+            session_id: firstResult.session_id,
+            user_id: firstResult.user_id,
+            session_description: firstResult.session_description,
+            number_of_users: firstResult.number_of_users,
+            room_id: firstResult.room_id
+        }
+        
+return res.status(200).send(JSON.stringify(response));
+
+    }
+
+
+})
+
+})
+
+
+
+
+
+
+//start of joinSession
+app.get("/join-session-mysql", function (req, res){
+    var it = req.query.room_id;
+console.log("Line 279 in database.js without error");
+    
+connection.query("SELECT * FROM session WHERE room_id = ?", it, function(err, results, fields){
+
+if (err){   
+    console.log("Something went wrong.");
+    console.log(err)
+    return res.status(209).send(JSON.stringify({msg: err}));
+} else if (results.length > 0){
+    console.log("Number of results with the room ID of " + it +  ": " + results.length)
+    const firstResult = results[0];
+        
+        const response = {
+            session_id: firstResult.session_id,
+            user_id: firstResult.user_id,
+            session_description: firstResult.session_description,
+            number_of_users: firstResult.number_of_users,
+            room_id: firstResult.room_id
+        }
+
+
+
+
+
+    return res.status(200).send(JSON.stringify(response));
+
+
+} else if (results.length === 0 ){
+    console.log("No results found. Invalid room ID");
+}
+console.log("joinSession is finished ");
+return results;
+
+})
+
+
+})
+
+//start of save-text
+app.post("/save-text-mysql",function(req, res){
+    var data = {
+          session_id  : req.body.session_id,
+           text : req.body.text, 
+           user_id : req.body.user_id
+    }
+
+connection.query("INSERT INTO text SET ?", data, function(err){
+
+if (err){
+    console.log("error occured when saving text to database");
+    console.log(err);
+    return res.status(205).send(JSON.stringify({msg: err}));
+
+} else{
+    return res.status(201).send(JSON.stringify({msg: "SUCCESS"}));
+}
+
+})
+
+}) //end of save text
+
+
+app.post('/increase-numberOfUsers-mysql', function(req, res){
+    var thing = req.body.room_id;
+    console.log("Bababooey." + thing);
+
+
+connection.query("UPDATE session SET number_of_users = 1 + number_of_users WHERE room_id = ?", thing, function(err){
+    
+})
+
+
+
+})
+
 
 
 }; //end of services 

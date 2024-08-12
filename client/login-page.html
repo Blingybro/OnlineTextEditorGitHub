@@ -47,68 +47,75 @@
 
 <div class = "container text-center">
 
-<div class = "row"> <!--Start of first row-->
+<div class = "row justify-content-center"> <!--Start of first row-->
 
 
-<div class = "col"><h1> Log in Here: </h1> </div> <!--Start of -->
 
+
+
+
+    <div class = "col" id = "border-box-login"> <!--Thing so everything is stacked in the same column-->
+
+<h1> Log In</h1>
 
 <!--Start of first form-->
-<div class = "col">
-     <form>
-<div class = "form-group">
-<input type = "text" id = "user-id" name = "user-id" placeholder ="johnDoe@aol.com"> </input>
-     </div>
-</form>
-</div>
-
-
-<!--End of first form-->
-</div> <!--End of first row-->
-
-
-<div class = "row"> <!--Start of second row-->
-
-
-    <div class = "col"><h1> Or Sign up
-         <a href="/register-page" id = "register-link">  HERE:</a> 
-        
-        </h1> 
-    
-    
-    </div> 
-    <!-- Start of second form -->
-    <div class = "col">
-        <form>  
-   <div class = "form-group">
-   <input class = "form-placeholder" type = "password" id = "user-password" name = "user-password" placeholder ="qwerty"> </input>
+      <form>
+        <div class = "form-group">
+          <input type = "text" id = "user-id" name = "user-id" placeholder ="johnDoe@aol.com"> </input>
         </div>
-   </form>
-   </div>
-
-<!--End of second form-->
-    </div> <!--End of second row-->
-
-    <div class = "row"> <!--Start of third row-->
-      <div class = "col"></div>
-      
-      <div class = "col">
-      <!--Start of button-->
-      <button id = "login-button" class = "account-button" onclick = loginUser()> Log in</button>
-      </div> <!--End of button-->
-      </div> <!--End of third row-->
+    </form>
 
 
 
-      <div class = "row"> <!--Start of fourth row-->
-        <div class = "col"></div>
-        
-        <div class = "col">
-        <!--Start of button-->
-        <h1 id = "user-status">Words</h1>
+    <!--End of first form-->
+<br>
+    <!--Temp-->
+
+    <form>  
+    <div class = "form-group">
+    <input class = "form-placeholder" type = "password" id = "user-password" name = "user-password" placeholder ="qwerty"> </input>
+    </div>
+    </form>
+
+<!--Button-->
+<br>
+
+<button id = "login-button" class = "account-button" onclick = loginUser()> Log in</button>
+<!--End of button-->
+
+<h1 id = "user-status"></h1>
         <a href="/sessions" id = "sessions-link">  View active sessions:</a>
-        </div> <!--End of button-->
-        </div> <!--End of fourth row-->
+
+    </div> <!-- Thing so everything is stacked in the same column-->
+    <!--End of temp-->
+
+    <div class = "col"> 
+<br>
+<br>
+<br>
+      <h1> No account?
+        </h1>
+      <h1>
+        <a href="/register-page" id = "register-link">  Sign up</a> 
+       
+       </h1>
+
+
+    </div> <!--Dividing thing. -->
+
+
+
+
+    </div> <!--End of first row-->
+
+
+
+
+    
+
+
+
+      
 
 
 

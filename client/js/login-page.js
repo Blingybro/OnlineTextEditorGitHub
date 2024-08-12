@@ -34,13 +34,17 @@ var jsonString = {
          var returnData = JSON.parse(response); 
                      
           const checkValue = "LOGIN SUCCESSFUL";
+          const incorrectValue = "Invalid entry";
              //alert(returnData.msg);
              console.log(response + " is the return data"); 
              if  (returnData.msg === checkValue){        
                 document.getElementById("user-status").innerHTML = "Login successful";
                 setupUser(returnData);
              //assignUser(emailValue);                                        
-    } 
+    } else if (returnData.msg === incorrectValue){
+        console.log("Incorrect value is triggered");
+        alert("Invalid username or password");
+    }
 
         },
         error: function(err){                           

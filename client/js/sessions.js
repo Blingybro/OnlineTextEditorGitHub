@@ -1,5 +1,9 @@
 var theId = localStorage.getItem("User ID");
 var room;
+var theUserEmail = localStorage.getItem("User Email");
+var theDisplayName = localStorage.getItem("Display Name");
+var activeSessionID;
+
 nameDisplay();
 function joinSessionDropdown(){
     console.log("Dropdown was clicked.");
@@ -29,8 +33,12 @@ console.log("The button for the date & room was triggered.")
     console.log("Room ID: " + room);
 
     socket.emit("join", JSON.stringify({room: room}));
-
+    
 console.log(room + " is the room ID.");
+
+
+ 
+
 
 //retrieving information about session and host
 
@@ -40,11 +48,19 @@ var sesh_value = session_description.value;
 //get user id
 var user_id = theId;
 
+//display values before putting it into database
+document.getElementById("displaySessionIDDisplay").innerHTML = room;
+// document.getElementById().innerHMTL = e;
+// document.getElementById().innerHMTL = e;
+// document.getElementById().innerHMTL =e ;
+// document.getElementById().innerHMTL =e ;
+
 //put it all together
 var dataForGeneration = {
     user_id: user_id,
     session_description: sesh_value,
-    number_of_users: 1
+    number_of_users: 1,
+    room_id: room
 };
 
 
@@ -55,7 +71,7 @@ var dataForGeneration = {
         data: dataForGeneration,
         success: function(response){
             
-            
+            console.log("The response from generate-session: " + response)
              var returnData = JSON.parse(response);
              
             
@@ -77,7 +93,7 @@ var dataForGeneration = {
         const sessionHandler = ('../../server/database');
         
 
-
+        getSessionID();
     
 //division of functions.
     }
@@ -127,7 +143,158 @@ var currentUser = localStorage.getItem("Display Name")
 }
 //end of name display
 
+//start of join session button
+function joinSession(){
+    var userRoomID = document.getElementById("join-session-ID").value;
+    
+    console.log("Join session was clicked, with the ID of " + userRoomID);
 
+    var theString = {
+        room_id: userRoomID
+    }
+
+//start of ajax
+
+$.ajax({
+    url: databaseURL + "/join-session-mysql",
+    type: 'get',
+    data: theString,
+    success: function(response){
+        
+        console.log("Response received: " + response)
+        var theReturnData = JSON.parse(response);
+        document.getElementById("displaySessionIDDisplay").innerHTML =theReturnData.room_id;
+        document.getElementById("host_id_display").innerHTML = theReturnData.user_id;
+        //number of users needs to be updated. how do we do it?
+        //call to a function that will update the numberOfUsers in the current session
+        //send over the identifier (room_id) and be add 1 to the numberOfUsers
+        increaseNumberOfUsers(theReturnData.room_id);
+        document.getElementById("numberOfUsers").innerHTML = theReturnData.number_of_users;
+        document.getElementById("sessionDescriptionDisplay").innerHTML = theReturnData.session_description ;
+        displayModal();
+    },
+    error: function (err){
+        console.log("An error occured.");
+        console.log(err);
+    }
+});
+
+
+//end of ajax
+console.log("Line 174 in sessions.js ran.");
+    socket.emit("join", JSON.stringify({room: userRoomID}));
+ //   displayModal();
+}
+
+//start of saveText function
+
+function saveText(toBeUsed){
+    var backToString = JSON.parse(toBeUsed);
+    console.log("First part:" + backToString.text);
+
+$.ajax({
+url: databaseURL + "/save-text-mysql",
+type: 'post',
+data: backToString,
+sucess: function(response){
+    console.log("The text was properly saved. Yippie" + response);
+    var returnData = JSON.parse(response);
+}, 
+error: function(err){
+    console.log("Error saving text to database.");
+    console.log(err);
+}
+
+
+})
+
+
+}
+//end of saveText function
+
+
+//start of getSessionID function
+
+function getSessionID(){
+var theCurrentRoom = document.getElementById("displaySessionIDDisplay").innerHTML;
+console.log("getSessionID was triggered, and the room is " + theCurrentRoom);
+var theData = {
+    room_id: theCurrentRoom
+}
+//now: We query the database, and get the right thing returned
+
+$.ajax({
+    url: databaseURL + "/get-session-id-mysql",
+    type: 'get',
+    data: theData,
+    success: function(response){
+        console.log("Success. Response: " + response)
+            var theReturnData = JSON.parse(response);
+            activeSessionID = theReturnData.session_id;
+            //lines to display the correct information about session
+            document.getElementById("displaySessionIDDisplay").innerHTML = room;
+            document.getElementById("host_id_display").innerHTML = theReturnData.user_id;
+            document.getElementById("numberOfUsers").innerHTML = theReturnData.number_of_users;
+            document.getElementById("sessionDescriptionDisplay").innerHTML = theReturnData.session_description ;
+ 
+
+        
+
+
+    },
+    error: function (err){
+        console.log("An error happened.");
+        console.log(err);
+    }
+})
+
+}
+//end of getSessionID
+
+
+
+
+
+
+//start of log out button
+
+function logOut(){
+    console.log("The button to log out was clicked");
+    
+    localStorage.setItem("User ID", "" );
+    localStorage.setItem("User Email", "" );
+    localStorage.setItem("Display Name", "" );
+    location.assign(databaseURL);
+    console.log("Is this triggered?");
+    alert("Logged out successfully");
+}
+//end of log out button
+
+
+//start of increaseNumberOfUsers function
+
+function increaseNumberOfUsers(room_id){
+console.log("The room with the room_id of " + room_id + 
+    " needs to increase their number of users by 1" );
+
+var the_room_id = {
+    room_id: room_id
+}
+
+$.ajax({
+    url: databaseURL + "/increase-numberOfUsers-mysql",
+    type: 'post',
+    data: the_room_id,
+    success: function(response){
+        console.log("Success. It went through. " + response);
+    }
+
+})
+
+
+
+}
+//end of increaseNumberOfUsers function
 
 
 //start of modal stuff
@@ -172,21 +339,55 @@ const socket = io(databaseURL, {
 const form = document.getElementById('form');
 const input = document.getElementById('input');
 const messages = document.getElementById('messages');
+var theHTML = "";
+var userSpecificInfo = {
+    user_id:theId,
+    user_email: theUserEmail,
+    display_name: theDisplayName
 
+
+}
 form.addEventListener('submit', function(event) {
     event.preventDefault();
     if (input.value) {
-        socket.emit('chat message', input.value);
+
+        var dataForSaving = {
+            session_id: activeSessionID,
+            text: input.value,
+            userName: theDisplayName,
+            user_id: theId
+        }
+
+        var toBeSent= JSON.stringify(dataForSaving);
+            saveText(toBeSent);
+
+
+        //here is where I do it
+        var sentData = {
+            message: input.value,
+            userName: theDisplayName
+            
+        }
+        socket.emit('chat-message', sentData);
         input.value = '';
     }
 });
 
-socket.on('chat message', function(msg) {
-    console.log(msg);
+socket.on('chat_message', function(msg) {
+    console.log( userSpecificInfo.display_name +  " with the email " + userSpecificInfo.user_email + " typed out, " + msg)
+    console.log()
     const item = document.createElement('li');
     item.textContent = msg;
+    
+ document.getElementById("user-text-location").innerHTML += msg.message;
 
- document.getElementById("user-text-location").innerHTML = msg;
+ theHTML += "<div id = 'userBox'>" +
+  "<p id = 'userBoxUsername'>   " + msg.userName +  "</p>" + 
+  "<p id = 'userBoxText'>" + 
+  msg.message + 
+ "</p>" +
+ "</div>"
+ $("#user-text-location").html(theHTML);
 
  
    // window.scrollTo(0, document.body.scrollHeight);
